@@ -3,379 +3,499 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yaratıcı Dünya | Hoş Geldiniz</title>
+    <title>MoodBoost - Emoji Şarkı Oyunu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap');
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #f43f5e;
+            --bg-gradient: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            --glass: rgba(255, 255, 255, 0.7);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
 
-:root {
-  --primary: #00BFFF;   /* Parlak Mavi */
-  --secondary: #000080; /* Lacivert */
-  --accent: #8B0000;    /* Bordo */
-  --bg: #050510;        /* Koyu Lacivert Arkaplan */
-  --text: #ffffff;
-  --glass: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  cursor: none; /* We'll use a custom butterfly cursor */
-}
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: background 1s ease;
+        }
 
-body {
-  font-family: 'Outfit', sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-  overflow: hidden;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+        /* Arka Plan Efektleri */
+        .bg-circles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
 
-/* Animated Mesh Background */
-.bg-mesh {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background: radial-gradient(circle at 50% 50%, var(--secondary) 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, var(--primary) 0%, transparent 40%),
-              radial-gradient(circle at 20% 80%, var(--accent) 0%, transparent 40%);
-  filter: blur(80px);
-  opacity: 0.5;
-  animation: mesh-move 20s ease-in-out infinite alternate;
-}
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            filter: blur(40px);
+            animation: float 20s infinite linear;
+        }
 
-/* Flat Main Content Container Adjustments */
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 2rem;
-  z-index: 10;
-  max-width: 800px;
-  width: 95%;
-  animation: fade-in 1.5s ease-out;
-}
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, 50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
 
-/* Profile Picture Section */
-.profile-section {
-  margin-bottom: 1.5rem;
-}
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
 
-.profile-pic {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid var(--primary);
-  box-shadow: 0 0 20px rgba(0, 191, 255, 0.4);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  animation: spin 10s linear infinite;
-}
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+        p.subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
 
-.profile-pic:hover {
-  animation-play-state: paused;
-  transform: scale(1.1);
-  box-shadow: 0 0 40px rgba(0, 191, 255, 0.9);
-}
+        .emoji-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
 
-.main-name {
-  font-size: 3.5rem;
-  font-weight: 700;
-  margin-top: 1rem;
-  margin-bottom: 0.2rem;
-  background: linear-gradient(45deg, var(--primary), #ffffff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -1px;
-}
+        .emoji-item {
+            font-size: 3.5rem;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
 
-.subtitle {
-  font-size: 1.2rem;
-  color: var(--primary);
-  margin-top: 10px;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
+        .emoji-item:hover {
+            transform: scale(1.15) translateY(-10px);
+            background: #fff;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
 
-.greeting-text {
-  font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 2.5rem;
-  line-height: 1.6;
-  max-width: 600px;
-}
+        .emoji-item.active {
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
 
-/* Button Group */
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 500px;
-}
+        /* Sonuç Kartı */
+        .result-card {
+            display: none;
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            animation: slideUp 0.6s ease-out;
+        }
 
-/* Creative Link Button */
-.cta-button {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-decoration: none;
-  color: white;
-  border-radius: 100px;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.primary-hero-btn {
-  background: linear-gradient(45deg, var(--accent), var(--secondary));
-  padding: 1.5rem 3rem;
-  font-size: 1.4rem;
-  box-shadow: 0 10px 30px rgba(139, 0, 0, 0.4);
-  width: 100%;
-}
+        .mood-emoji-display {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: bounce 2s infinite ease-in-out;
+        }
 
-.primary-hero-btn:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 20px 40px rgba(139, 0, 0, 0.6),
-              0 0 30px var(--primary);
-}
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
 
-.cta-button::after {
-  content: '';
-  display: none; /* Removed global rocket emoji, added inline in html */
-}
+        .quote {
+            font-size: 1.2rem;
+            color: #333;
+            font-weight: 600;
+            font-style: italic;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
 
-/* Secondary Buttons */
-.secondary-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(10px);
-  box-shadow: none;
-}
+        .song-info {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-left: 5px solid var(--primary);
+        }
 
-.secondary-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.2);
-}
+        .song-title {
+            font-weight: 800;
+            color: #1e293b;
+            font-size: 1.1rem;
+        }
 
-/* Custom Butterfly Cursor Effects */
-.butterfly {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  font-size: 24px;
-  transform-origin: center;
-  transition: transform 0.1s ease-out;
-}
+        .song-artist {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
 
-.butterfly-trail {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9998;
-  font-size: 16px;
-  animation: fly-away 1s ease-out forwards;
-}
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
 
-.giant-butterfly {
-  position: fixed;
-  pointer-events: none;
-  z-index: 10000;
-  font-size: 80px;
-  animation: giant-fly-away 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
+        .btn {
+            padding: 12px 25px;
+            border-radius: 99px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-@keyframes fly-away {
-  0% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
-  100% { transform: scale(0.5) translateY(-50px) rotate(45deg); opacity: 0; }
-}
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
 
-@keyframes giant-fly-away {
-  0% { transform: scale(0.5) translate(0, 0) rotate(0deg); opacity: 1; }
-  100% { transform: scale(3) translate(100vw, -100vh) rotate(720deg); opacity: 0; }
-}
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
 
-/* Floating Messages */
-.floating-message {
-  position: fixed;
-  color: var(--primary);
-  font-size: 1.5rem;
-  font-weight: 600;
-  pointer-events: none;
-  z-index: 10001;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-  animation: float-up 2s ease-out forwards;
-}
+        .btn-youtube {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
 
-@keyframes float-up {
-  0% { transform: translateY(0) scale(0.5); opacity: 0; }
-  20% { opacity: 1; transform: translateY(-20px) scale(1.2); }
-  100% { transform: translateY(-100px) scale(1); opacity: 0; }
-}
+        .btn-youtube:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
 
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+        /* Çıkış Ekranı */
+        #exit-screen {
+            display: none;
+            text-align: center;
+        }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .main-name { font-size: 2.5rem; }
-  .container { padding: 1rem; }
-  .primary-hero-btn { font-size: 1.1rem; padding: 1rem 2rem; }
-}
+        .rating-grid {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .rating-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .rating-btn:hover, .rating-btn.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .finish-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0.7;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+        }
+
+        .finish-btn:hover {
+            opacity: 1;
+        }
+
+        /* Mobil Uyumluluk */
+        @media (max-width: 600px) {
+            .container { padding: 25px; }
+            h1 { font-size: 1.8rem; }
+            .emoji-item { width: 70px; height: 70px; font-size: 2.5rem; }
+            .actions { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
-    <!-- Background Elements -->
-    <div class="bg-mesh"></div>
 
-    <!-- Main Content -->
-    <div class="container">
-        
-        <div class="profile-section">
-            <a href="https://github.com/ece-naz" target="_blank">
-                <img src="https://github.com/ece-naz.png" alt="Ece Naz Aktürk Profile" class="profile-pic">
-            </a>
-            <h1 class="main-name">Ece Naz Aktürk</h1>
-            <h2 class="subtitle">MAKÜ Veri Bilimi ve Analitiği</h2>
+    <div class="bg-circles">
+        <div class="circle" style="width: 400px; height: 400px; top: -100px; right: -100px; background: rgba(99, 102, 241, 0.15);"></div>
+        <div class="circle" style="width: 300px; height: 300px; bottom: -50px; left: -50px; background: rgba(168, 85, 247, 0.15);"></div>
+    </div>
+
+    <div class="container" id="main-container">
+        <div id="game-screen">
+            <h1>MoodBoost</h1>
+            <p class="subtitle">Bugün kendini nasıl hissediyorsun? Bir emoji seç ve enerjini değiştir!</p>
+
+            <div class="emoji-grid">
+                <div class="emoji-item" onclick="selectMood('happy', this)" title="Harika">😊</div>
+                <div class="emoji-item" onclick="selectMood('sad', this)" title="Hüzünlü">😔</div>
+                <div class="emoji-item" onclick="selectMood('energetic', this)" title="Enerjik">⚡</div>
+                <div class="emoji-item" onclick="selectMood('chill', this)" title="Sakin">🧘</div>
+                <div class="emoji-item" onclick="selectMood('romantic', this)" title="Romantik">❤️</div>
+            </div>
+
+            <div id="result-card" class="result-card">
+                <div class="mood-emoji-display" id="display-emoji">😊</div>
+                <div class="quote" id="display-quote">"Her yeni gün, yeni bir başlangıçtır."</div>
+                
+                <div class="song-info">
+                    <p style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Müzik Önerisi</p>
+                    <div class="song-title" id="display-song-title">Ele Güne Karşı</div>
+                    <div class="song-artist" id="display-song-artist">MFÖ</div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="refreshContent()">
+                        <span>🔄</span> Değiştir
+                    </button>
+                    <a href="#" target="_blank" class="btn btn-youtube" id="display-youtube">
+                        <span>▶️</span> YouTube
+                    </a>
+                </div>
+            </div>
+
+            <button class="btn finish-btn" onclick="showExit()">
+                🚪 Uygulamadan Çık
+            </button>
         </div>
 
-        <p class="greeting-text">
-            Dijital dünyanın renkli ve interaktif yüzüne hoş geldiniz. 
-            Burada hayal gücü ile teknolojinin buluştuğu küçük bir evrene adım atacaksınız.
-            Ece Naz Aktürk'ün projelerini keşfedin!
-        </p>
-        
-        <div class="button-group">
-            <a href="emoji_sarki.html" class="cta-button primary-hero-btn">
-                Emoji Şarkısı Macerası 🚀
-            </a>
+        <div id="exit-screen">
+            <h1 id="exit-title">Harika Bir Seçim!</h1>
+            <p class="subtitle" id="exit-question">Kendini şimdi biraz daha iyi hissediyor musun?</p>
             
-            <a href="https://github.com/ece-naz/3.hafta/blob/main/normal_dagilim_grafigi.png" target="_blank" class="cta-button secondary-btn">
-                📊 Görsel
-            </a>
-            
-            <a href="https://github.com/ece-naz/3.hafta/blob/main/normal_dagilimli_veri.csv" target="_blank" class="cta-button secondary-btn">
-                📄 Veri Seti
-            </a>
-        </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="setFeel(true)">Evet, Çok Daha İyiyim!</button>
+                <button class="btn" style="border: 1px solid #ddd;" onclick="setFeel(false)">Fena Sayılmam</button>
+            </div>
+
+            <div id="rating-section" style="display: none; margin-top: 30px; animation: slideUp 0.5s;">
+                <p>Bugüne kaç puan verirsin?</p>
+                <div class="rating-grid">
+                    <button class="rating-btn" onclick="selectRate(this)">1</button>
+                    <button class="rating-btn" onclick="selectRate(this)">2</button>
+                    <button class="rating-btn" onclick="selectRate(this)">3</button>
+                    <button class="rating-btn" onclick="selectRate(this)">4</button>
+                    <button class="rating-btn" onclick="selectRate(this)">5</button>
+                    <button class="rating-btn" onclick="selectRate(this)">6</button>
+                    <button class="rating-btn" onclick="selectRate(this)">7</button>
+                    <button class="rating-btn" onclick="selectRate(this)">8</button>
+                    <button class="rating-btn" onclick="selectRate(this)">9</button>
+                    <button class="rating-btn" onclick="selectRate(this)">10</button>
+                </div>
+                <button class="btn btn-primary" onclick="finalFinish()">Günü Kapat</button>
+            </div>
         </div>
     </div>
 
     <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Create the main butterfly cursor
-  const mainButterfly = document.createElement('div');
-  mainButterfly.className = 'butterfly';
-  mainButterfly.innerText = '🦋';
-  document.body.appendChild(mainButterfly);
+        const moodData = {
+            happy: {
+                bg: "linear-gradient(135deg, #fef9c3 0%, #fef08a 100%)",
+                quotes: [
+                    "Bugün parlıyorsun, engel tanıma!",
+                    "Gülümsemen dünyayı güzelleştiriyor.",
+                    "Mutluluk bir seçimdir, sen bugün en iyisini seçtin.",
+                    "Senin enerjin bulaşıcı, herkesi mutlu ediyorsun!"
+                ],
+                songs: [
+                    { title: "Ele Güne Karşı", artist: "MFÖ", link: "https://www.youtube.com/watch?v=RIsLqY2mX9U" },
+                    { title: "Keyfi Yolunda", artist: "Yalın", link: "https://www.youtube.com/watch?v=F0p7vW3X8XU" },
+                    { title: "Gülümse", artist: "Sezen Aksu", link: "https://www.youtube.com/watch?v=0hK2g7X7u7s" }
+                ]
+            },
+            sad: {
+                bg: "linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)",
+                quotes: [
+                    "Her fırtınanın ardından güneş mutlaka doğar.",
+                    "Kendine karşı nazik ol, sen çok değerlisin.",
+                    "Bugün sadece bir gündü, yarın taptaze bir başlangıç.",
+                    "Hissedilen her şey geçicidir, güçlenerek çıkacaksın."
+                ],
+                songs: [
+                    { title: "İyileşiyorum", artist: "Sertab Erener", link: "https://www.youtube.com/watch?v=68E6XlY7f88" },
+                    { title: "Aşk", artist: "Şebnem Ferah", link: "https://www.youtube.com/watch?v=9g0H_C8vHGo" },
+                    { title: "Mazeretim Var", artist: "MFÖ", link: "https://www.youtube.com/watch?v=7uNf1P8M5-g" }
+                ]
+            },
+            energetic: {
+                bg: "linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)",
+                quotes: [
+                    "Durdurulamaz bir güçsün, harekete geç!",
+                    "Bugün dünyayı değiştirmeye ne dersin?",
+                    "Potansiyelin sınırsız, sınırlarını zorla.",
+                    "Ateşinle herkesi büyüleyebilirsin!"
+                ],
+                songs: [
+                    { title: "Kafama Göre", artist: "Athena", link: "https://www.youtube.com/watch?v=L2GzFfAn72c" },
+                    { title: "Cambaz", artist: "Mor ve Ötesi", link: "https://www.youtube.com/watch?v=MInZ6s8QpQ4" },
+                    { title: "Bir Kadın Çizeceksin", artist: "Manga", link: "https://www.youtube.com/watch?v=8S_r70qZ_94" }
+                ]
+            },
+            chill: {
+                bg: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
+                quotes: [
+                    "Sakinlik zihnin en büyük gücüdür.",
+                    "Derin bir nefes al ve anın tadını çıkar.",
+                    "Huzur senin içinde, onu keşfetmeni bekliyor.",
+                    "Her şeyın bir zamanı var, akışa güven."
+                ],
+                songs: [
+                    { title: "Sakin Ol", artist: "Sertab Erener", link: "https://www.youtube.com/watch?v=J_h8MhM_e2M" },
+                    { title: "Yollarda", artist: "Teoman", link: "https://www.youtube.com/watch?v=nO3_7fV8z6Q" },
+                    { title: "Sende Bir Şeyler Var", artist: "Adamlar", link: "https://www.youtube.com/watch?v=6P6M6DqV36A" }
+                ]
+            },
+            romantic: {
+                bg: "linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)",
+                quotes: [
+                    "Sevgi paylaştıkça çoğalan tek mucizedir.",
+                    "Kalbinin sesini dinle, en doğru yolu o gösterir.",
+                    "Hayat birini sevdikçe güzelleşir.",
+                    "Ruhun bugün sevgi dolu, bunu yansıt!"
+                ],
+                songs: [
+                    { title: "İyi Ki Varsın", artist: "Yalın", link: "https://www.youtube.com/watch?v=G3M5XnI-O_s" },
+                    { title: "Tencere Kapak", artist: "Kenan Doğulu", link: "https://www.youtube.com/watch?v=9g0H_C8vHGo" },
+                    { title: "Kalp Hanım", artist: "Kalben", link: "https://www.youtube.com/watch?v=68M6XlY7f88" }
+                ]
+            }
+        };
 
-  let mouseX = 0;
-  let mouseY = 0;
+        let currentMood = null;
 
-  window.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+        function selectMood(mood, element) {
+            currentMood = mood;
+            const data = moodData[mood];
+            
+            // UI Güncelleme
+            document.querySelectorAll('.emoji-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            
+            document.body.style.background = data.bg;
+            
+            const card = document.getElementById('result-card');
+            card.style.display = 'block';
+            
+            document.getElementById('display-emoji').textContent = element.textContent;
+            
+            refreshContent();
+        }
 
-    // Main butterfly follows mouse
-    // Offset slightly so we can click things under the mouse
-    mainButterfly.style.left = `${mouseX + 10}px`;
-    mainButterfly.style.top = `${mouseY + 10}px`;
+        function refreshContent() {
+            if (!currentMood) return;
+            const data = moodData[currentMood];
+            
+            // Rastgele seçimler
+            const randomQuote = data.quotes[Math.floor(Math.random() * data.quotes.length)];
+            const randomSong = data.songs[Math.floor(Math.random() * data.songs.length)];
+            
+            // Animasyonla içerik değiştirme
+            const quoteEl = document.getElementById('display-quote');
+            const songTitleEl = document.getElementById('display-song-title');
+            const songArtistEl = document.getElementById('display-song-artist');
+            const ytLink = document.getElementById('display-youtube');
 
-    // Only create trail occasionally to not overwhelm the DOM
-    if (Math.random() > 0.8) {
-      createTrail(mouseX, mouseY);
-    }
-  });
+            quoteEl.style.opacity = 0;
+            setTimeout(() => {
+                quoteEl.textContent = `"${randomQuote}"`;
+                songTitleEl.textContent = randomSong.title;
+                songArtistEl.textContent = randomSong.artist;
+                ytLink.href = randomSong.link;
+                quoteEl.style.opacity = 1;
+                quoteEl.style.transition = 'opacity 0.4s';
+            }, 200);
+        }
 
-  function createTrail(x, y) {
-    const trail = document.createElement('div');
-    trail.className = 'butterfly-trail';
-    trail.innerText = '🦋';
-    trail.style.left = `${x}px`;
-    trail.style.top = `${y}px`;
-    
-    document.body.appendChild(trail);
+        function showExit() {
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('exit-screen').style.display = 'block';
+        }
 
-    setTimeout(() => {
-      trail.remove();
-    }, 1000); // matches the animation duration
-  }
+        function setFeel(better) {
+            const subtitle = document.getElementById('exit-question');
+            const exitTitle = document.getElementById('exit-title');
+            
+            if (better) {
+                exitTitle.textContent = "Harika! Enerjin Değişti ✨";
+                subtitle.textContent = "Bunu duyduğumuza çok sevindik. Bugün senin için parlasın!";
+            } else {
+                exitTitle.textContent = "Yarın Yepyeni Bir Gün 🌱";
+                subtitle.textContent = "Umarız bu müzikler en azından biraz huzur vermiştir.";
+            }
+            
+            document.querySelector('#exit-screen .actions').style.display = 'none';
+            document.getElementById('rating-section').style.display = 'block';
+        }
 
-  // Giant butterfly on button click
-  const buttons = document.querySelectorAll('.cta-button');
-  buttons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      // Don't prevent default right away so navigation still happens
-      // But we can spawn a giant butterfly from the click location!
-      spawnGiantButterfly(e.clientX, e.clientY);
-    });
-  });
+        function selectRate(btn) {
+            document.querySelectorAll('.rating-btn').forEach(el => el.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
 
-  function spawnGiantButterfly(x, y) {
-    const giant = document.createElement('div');
-    giant.className = 'giant-butterfly';
-    giant.innerText = '🦋';
-    giant.style.left = `${x}px`;
-    giant.style.top = `${y}px`;
-    
-    document.body.appendChild(giant);
-
-    setTimeout(() => {
-      giant.remove();
-    }, 2000); // matches giant-fly-away animation duration
-  }
-
-  // Floating nice messages on empty space click
-  const messages = [
-    "Hoş Geldiniz! ✨",
-    "Gününüz güzel geçsin! 🌸",
-    "Harika projeler sizi bekliyor! 🚀",
-    "Veri bilimi çok eğlencelidir! 📊",
-    "Kodlamaya devam! 💻",
-    "İlham dolu dokunuşlar! 🦋",
-    "Gülümseyin! 😊"
-  ];
-
-  document.addEventListener('click', (e) => {
-    // Check if the click was on a button or the profile section
-    if (e.target.closest('.cta-button') || e.target.closest('.profile-section')) {
-      return; 
-    }
-
-    const msgElement = document.createElement('div');
-    msgElement.className = 'floating-message';
-    msgElement.innerText = messages[Math.floor(Math.random() * messages.length)];
-    msgElement.style.left = `${e.clientX}px`;
-    msgElement.style.top = `${e.clientY}px`;
-    
-    document.body.appendChild(msgElement);
-
-    setTimeout(() => {
-      msgElement.remove();
-    }, 2000); // matches float-up animation duration
-  });
-});
+        function finalFinish() {
+            document.getElementById('exit-screen').innerHTML = `
+                <h1 style="font-size: 3rem;">Teşekkürler! ❤️</h1>
+                <p class="subtitle">Bu uygulama bugün senin için oradaydı. Tekrar görüşmek üzere!</p>
+                <button class="btn btn-primary" onclick="location.reload()">Başa Dön</button>
+            `;
+        }
     </script>
 </body>
 </html>
